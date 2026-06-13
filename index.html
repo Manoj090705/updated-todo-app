@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Advanced To-Do App</title>
+  <style>
+    body {
+      font-family: Arial;
+      background: #121212;
+      color: white;
+      text-align: center;
+    }
+
+    h2 {
+      margin-top: 20px;
+    }
+
+    input {
+      padding: 10px;
+      width: 250px;
+      border: none;
+      border-radius: 5px;
+    }
+
+    button {
+      padding: 10px;
+      margin-left: 5px;
+      border: none;
+      border-radius: 5px;
+      background: #00adb5;
+      color: white;
+      cursor: pointer;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin-top: 20px;
+    }
+
+    li {
+      background: #1e1e1e;
+      margin: 10px auto;
+      padding: 10px;
+      width: 300px;
+      display: flex;
+      justify-content: space-between;
+      border-radius: 5px;
+    }
+
+    .completed {
+      text-decoration: line-through;
+      color: gray;
+    }
+
+    .delete-btn {
+      background: red;
+      border: none;
+      color: white;
+      padding: 5px;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+
+<h2>🔥 My To-Do List</h2>
+
+<input type="text" id="taskInput" placeholder="Enter task">
+<button onclick="addTask()">Add</button>
+
+<ul id="taskList"></ul>
+
+<script>
+let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+
+function renderTasks() {
+  let list = document.getElementById("taskList");
+  list.innerHTML = "";
+
+  tasks.forEach((task, index) => {
+    let li = document.createElement("li");
+
+    let span = document.createElement("span");
+    span.textContent = task.text;
+    if (task.completed) span.classList.add("completed");
+
+    span.onclick = () => {
+      tasks[index].completed = !tasks[index].completed;
+      saveTasks();
+    };
+
+    let delBtn = document.createElement("button");
+    delBtn.textContent = "X";
+    delBtn.className = "delete-btn";
+    delBtn.onclick = () => {
+      tasks.splice(index, 1);
+      saveTasks();
+    };
+
+    li.appendChild(span);
+    li.appendChild(delBtn);
+    list.appendChild(li);
+  });
+}
+
+function addTask() {
+  let input = document.getElementById("taskInput");
+  let text = input.value.trim();
+
+  if (text === "") return;
+
+  tasks.push({ text: text, completed: false });
+  input.value = "";
+  saveTasks();
+}
+
+function saveTasks() {
+  localStorage.setItem("tasks", JSON.stringify(tasks));
+  renderTasks();
+}
+
+document.getElementById("taskInput")
+  .addEventListener("keypress", function(e) {
+    if (e.key === "Enter") addTask();
+  });
+
+renderTasks();
+</script>
+
+</body>
+</html>
